@@ -15,6 +15,7 @@ SoftWire Wire = SoftWire();
 #include "leds.h"
 #include "ds3231m.h"
 #define VFD_IV3A
+#define NUMDIGITS 2
 #include "vfd.h"
 
 void setup() {
