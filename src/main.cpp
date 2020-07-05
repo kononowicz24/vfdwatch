@@ -23,28 +23,19 @@ void setup() {
   DDRB = 0b00000011;
   PORTB = 0b00000011; //enable 2VOUT
   DDRD = 0b11111100;
+  DDRA = 0xff;
+  DDRC = 0xff;
+
+  PORTD = 0b00010100; //L blu
+  //vfd_set_disp(69);
+  //PORTC = 0b10101010
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  PORTD = 0b01110100; //L blu
-  delay(62);
-  PORTD = 0b10110100; //L red
-  delay(62);
-  PORTD = 0b11010100; //L red
-  delay(62);
-
-  PORTD = 0b01101100; //L blu
-  delay(62);
-  PORTD = 0b10101100; //L red
-  delay(62);
-  PORTD = 0b11001100; //L red
-  delay(62);
-
-  PORTD = 0b10011000; //L blu
-  delay(62);
-  PORTD = 0b01011000; //L red
-  delay(62);
-  PORTD = 0b00111000; //L red
-  delay(62);
+  //vfd_display();
+  PORTC=0XFF;
+  delay(300);
+  PORTC=0X00;
+  delay(300);
 }
