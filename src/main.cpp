@@ -5,7 +5,7 @@
 #define SCL_PORT PORTC
 #define SCL_PIN 0
 
-#define I2C_TIMEOUT 100
+#define I2C_TIMEOUT 10
 #define I2C_FASTMODE 1
 
 #include <SoftWire.h>
@@ -17,17 +17,18 @@ SoftWire Wire = SoftWire();
 
 #include "vfd2.h"
 
-#define RTCREFRESHMILLIS 500
+#define RTCREFRESHMILLIS 800
 volatile long long rtcLastMillis = -1*RTCREFRESHMILLIS;
 
-#define HRDISPMILLIS 500
-#define MINDISPMILLIS 500
+#define HRDISPMILLIS 800
+#define MINDISPMILLIS 800
 volatile unsigned long long hrDispLastMillis = -1*HRDISPMILLIS;
 
-uint8_t disp_hour = 88;
-uint8_t disp_minu = 88;
+uint8_t disp_hour = 69;
+uint8_t disp_minu = 42;
 
 void refreshTime() {
+    Wire.begin();
     disp_hour = ds3231m_getHours();
     disp_minu = ds3231m_getMinutes();
     rtcLastMillis = millis();
@@ -50,6 +51,7 @@ ISR(PCINT1_vect) {
 void setup() {
   // put your setup code here, to run once:
   cli();
+  Wire.begin();
   DDRD = 0b11111100;
   DDRA = 0xff;
   DDRC = 0xfd;
@@ -93,8 +95,8 @@ void loop() {
   {
   case SHOW_HOUR:
     PORTB = 0b00000011;
-    PORTA=~digits_PA[disp_hour/10]-segments_PA[0];
-    PORTC=~digits_PC[disp_hour/10];
+    PORTA=~digits_PA[(disp_hour/10)%10]-segments_PA[0];
+    PORTC=~digits_PC[(disp_hour/10)];
     delay(3);
     PORTA=~digits_PA[disp_hour%10]-segments_PA[1]-digits_dp_PA;
     PORTC=~digits_PC[disp_hour%10];
@@ -102,8 +104,8 @@ void loop() {
     break;
   case SHOW_MINUTE:
     PORTB = 0b00000011;
-    PORTA=~digits_PA[disp_minu/10]-segments_PA[0];
-    PORTC=~digits_PC[disp_minu/10];
+    PORTA=~digits_PA[(disp_minu/10)%10]-segments_PA[0];
+    PORTC=~digits_PC[(disp_minu/10)%10];
     delay(3);
     PORTA=~digits_PA[disp_minu%10]-segments_PA[1];
     PORTC=~digits_PC[disp_minu%10];
@@ -132,6 +134,6 @@ void loop() {
     current_state = ALL_OFF;
   }
 
-  if (disp_minu>59) disp_minu=0;
-  if (disp_hour>23) disp_hour=0; //check always
+  //if (disp_minu>59) disp_minu=0;
+  //if (disp_hour>23) disp_hour=0; //check always
 }
